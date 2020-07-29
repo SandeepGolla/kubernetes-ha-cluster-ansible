@@ -1,0 +1,15 @@
+---
+
+- hosts: k8s-nodes
+  tasks:
+
+  - shell: |
+      kubeadm reset -f
+      systemctl stop kubelet
+      rm -rf /var/lib/cni/
+      rm -rf /var/lib/etcd
+      rm -rf /var/lib/kubelet/*
+      rm -rf /etc/cni/
+      rm -rf /etc/kubernetes
+    become: yes
+    become_user: root

@@ -1,0 +1,14 @@
+---
+
+- name: launch haproxy
+  include: haproxy.yml
+
+- name: initialize controlplane
+  include: init-controlplane.yml
+
+- name: add controlplane members
+  include: add-controlplane.yml
+
+- name: add worker nodes
+  include: add-workernode.yml
+

@@ -1,0 +1,50 @@
+---
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Turn swap off
+  shell: swapoff -a
+
+- name: add apt signing key
+  apt_key:
+     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+     state: present
+
+- name: add repository
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: update
+  apt:
+    update_cache: yes
+  ignore_errors: True
+
+- name: install required packages
+  apt: name={{item}}
+  with_items:
+    - sshpass
+    - python3
+    - python3-pip
+    - pip3 install docker
+    - apt-transport-https
+
+- name: purge kubelet | kubeadm | kubectl packages
+  apt: name={{item}} state=absent
+  with_items:
+    - kubelet
+    - kubeadm
+    - kubectl
+  ignore_errors: True
+
+- name: install kubelet | kubeadm | kubectl packages
+  apt: name={{item}} state=present
+  with_items:
+    - kubelet={{kubeadm_version}}
+    - kubeadm={{kubeadm_version}}
+    - kubectl={{kubeadm_version}}
+

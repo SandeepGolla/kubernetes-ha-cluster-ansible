@@ -1,0 +1,18 @@
+- hosts: k8s-control-plane-members
+
+  vars:
+    config_file: "kubeadm-join-controlplane.yml"
+  roles:
+    - copy-certs
+    - kubeadm-join-node
+  tasks:
+    - file:
+        path: ~/.kube
+        state: directory
+
+    - copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ ansible_facts['env']['HOME'] }}/.kube/config"
+        remote_src: yes
+        owner: "{{ ansible_facts['env']['USER'] }}"
+      become: true

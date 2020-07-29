@@ -1,0 +1,26 @@
+---
+
+- name: create bootstrap token
+  shell: kubeadm token create
+  register: token
+  delegate_to: "{{ groups['k8s-control-plane-primary'][0] }}"
+
+- name: get cert hash
+  shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  register: cert_hash
+  delegate_to: "{{ groups['k8s-control-plane-primary'][0] }}"
+
+- set_fact:
+    bootstrap_token: "{{ token.stdout }}"
+    ca_cert_hash: "{{ cert_hash.stdout }}"
+
+- name: ensure that config directory is present
+  file: path={{ config_dir }} state=directory
+
+- name: copy join config
+  template:
+    src: "{{ config_file }}"
+    dest: "{{ config_dir }}/{{ config_file }}"
+
+- name: add node
+  shell: sudo kubeadm join --config {{ config_dir }}/{{ config_file }}

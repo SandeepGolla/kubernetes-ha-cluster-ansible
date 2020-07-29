@@ -1,0 +1,26 @@
+---
+
+- name: ensure that config directory is present
+  file: path={{ config_dir }} state=directory
+
+- name: copy init config
+  template:
+    src: kubeadm-init-controlplane.yml
+    dest: "{{ config_dir }}/kubeadm-init-controlplane.yml"
+
+- name: initialize controlplane
+  shell: sudo kubeadm init --config {{ config_dir }}/kubeadm-init-controlplane.yml
+
+- file:
+    path: ~/.kube
+    state: directory
+
+- copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_facts['env']['HOME'] }}/.kube/config"
+    remote_src: yes
+    owner: "{{ ansible_facts['env']['USER'] }}"
+  become: true
+
+- name: deply calico
+  shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml

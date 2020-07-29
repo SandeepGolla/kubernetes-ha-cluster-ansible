@@ -1,0 +1,8 @@
+---
+
+- hosts: k8s-nodes
+  become: yes
+  become_user: root
+  roles:
+    - prep-env
+    - docker

@@ -1,0 +1,21 @@
+---
+
+- name: ensure that config directory is present
+  file: path={{ config_dir }} state=directory
+
+- name: copy haproxy.cfg
+  template:
+    src: templates/haproxy.cfg
+    dest: "{{ config_dir }}/haproxy.cfg"
+
+- name: start haproxy
+  docker_container:
+    name: k8s-haproxy
+    image: haproxy
+    volumes:
+      - "{{ config_dir }}/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg"
+    ports:
+      - "{{ ha_proxy_port }}:6443"
+  register: container
+
+

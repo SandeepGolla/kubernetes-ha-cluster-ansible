@@ -1,0 +1,5 @@
+- hosts: k8s-worker-nodes
+  vars:
+    config_file: "kubeadm-join-worker-node.yml"
+  roles:
+    - kubeadm-join-node

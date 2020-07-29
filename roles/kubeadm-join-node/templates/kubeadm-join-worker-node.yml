@@ -1,0 +1,14 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: "{{ ha_proxy_ip }}:{{ ha_proxy_port }}"
+    token: {{ bootstrap_token }}
+    unsafeSkipCAVerification: true
+    caCertHashes:
+      - "sha256:{{ ca_cert_hash }}"
+  timeout: 5m0s
+  tlsBootstrapToken: {{ bootstrap_token }}
+kind: JoinConfiguration
+nodeRegistration:
+  criSocket: /var/run/dockershim.sock
+  name: {{ ansible_hostname }}

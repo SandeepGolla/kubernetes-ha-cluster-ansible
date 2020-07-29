@@ -1,0 +1,48 @@
+[haproxy]
+loadbalancer
+
+[k8s-control-plane-primary]
+k8s-master-1
+
+[k8s-control-plane-members]
+k8s-master-2
+k8s-master-3
+
+[k8s-control-planes:children]
+k8s-control-plane-primary
+k8s-control-plane-members
+
+[k8s-worker-nodes]
+k8s-worker-1
+k8s-worker-2
+k8s-worker-3
+
+[k8s-nodes:children]
+k8s-control-planes
+k8s-worker-nodes
+
+[all:vars]
+
+#Make sure that we are using python3, sychronize module that we use depends on python3
+ansible_python_interpreter=/usr/bin/python3
+
+#ansible_user=
+#ansible_ssh_pass=
+#or
+#ansible_ssh_private_key_file
+
+
+# all the kubeadm config files and haproxy files will be copied here
+config_dir="~/.ha-config"
+
+
+# Kubernetes (k8s) vars
+k8s_version=1.18.6
+kubeadm_version=1.18.6-00
+
+#for calico network plugin
+pod_subnet=192.168.0.0/16
+
+#load balancer
+ha_proxy_ip=
+ha_proxy_port=

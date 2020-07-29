@@ -1,0 +1,25 @@
+---
+
+- name: create certficate directories
+  file:
+    path: /etc/kubernetes/pki/etcd
+    state: directory
+  become: yes
+  become_user: root
+
+- name: copy certificates from init node to join control planes
+  synchronize:
+    src: "{{ item }}"
+    dest: "{{ item }}"
+  delegate_to: "{{ groups['k8s-control-plane-primary'][0] }}"
+  with_items:
+    - ["/etc/kubernetes/pki/ca.crt" ,
+       "/etc/kubernetes/pki/ca.key",
+       "/etc/kubernetes/pki/sa.key",
+       "/etc/kubernetes/pki/sa.pub",
+       "/etc/kubernetes/pki/front-proxy-ca.crt",
+       "/etc/kubernetes/pki/front-proxy-ca.key",
+       "/etc/kubernetes/pki/etcd/ca.crt",
+       "/etc/kubernetes/pki/etcd/ca.key"]
+  become: yes
+  become_user: root

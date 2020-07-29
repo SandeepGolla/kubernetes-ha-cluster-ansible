@@ -1,0 +1,5 @@
+---
+
+- hosts: k8s-control-plane-primary
+  roles:
+    - kubeadm-init-controlplane

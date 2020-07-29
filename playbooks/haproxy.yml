@@ -1,0 +1,9 @@
+---
+
+#gather facts
+- hosts: k8s-control-planes
+  tasks: []
+
+- hosts: haproxy
+  roles:
+    - loadbalancer
